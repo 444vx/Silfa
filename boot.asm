@@ -9,6 +9,14 @@ start:
     mov ss, ax
     mov sp, 0x7C00
 
+    mov ah, 0x02
+    mov al, 10
+    mov ch, 0
+    mov cl, 2
+    mov dh, 0
+    mov bx, 0x8000
+    int 0x13
+
     lgdt [gdt_descriptor]
 
     mov eax, cr0

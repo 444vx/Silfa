@@ -1,21 +1,19 @@
-ENTRY(start)
+ENTRY(_start)
 
-SECTIONS
-{
-    . = 0x7C00;
+SECTIONS {
+    . = 0x8000;
 
-    .text :
-    {
+    .text : {
+        entry.o(.text)
         *(.text)
     }
 
-    .data :
-    {
+    .data : {
         *(.data)
+        *(.rodata*)
     }
 
-    .bss :
-    {
+    .bss : {
         *(.bss)
     }
 }

@@ -10,11 +10,14 @@ start:
     mov sp, 0x7C00
 
     mov ah, 0x02
-    mov al, 10
+    mov al, 32
     mov ch, 0
     mov cl, 2
     mov dh, 0
     mov bx, 0x8000
+    xor ax, ax
+    mov es, ax
+    mov ax, 0x0220
     int 0x13
 
     lgdt [gdt_descriptor]
@@ -34,20 +37,28 @@ protected_mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
-
     call 0x8000
-
     hlt
-    jmp $
 
 gdt_start:
     dq 0
+
 gdt_code:
-    dw 0xFFFF, 0x0000
-    db 0x00, 0x9A, 0xCF, 0x00
+    dw 0xFFFF
+    dw 0x0000
+    db 0x00
+    db 0x9A
+    db 0xCF
+    db 0x00
+
 gdt_data:
-    dw 0xFFFF, 0x0000
-    db 0x00, 0x92, 0xCF, 0x00
+    dw 0xFFFF
+    dw 0x0000
+    db 0x00
+    db 0x92
+    db 0xCF
+    db 0x00
+
 gdt_end:
 
 gdt_descriptor:

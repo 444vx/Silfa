@@ -22,7 +22,7 @@ void kernel_main(void) {
     vga_print("IDT OK", 11, 0x0F);
     vga_print("KB init...", 12, 0x07);
     keyboard_init();
-    vga_print("KB OK - pisz tutaj:", 12, 0x0F);
+    vga_print("KB OK", 12, 0x0F);
     __asm__ volatile ("sti");
     while (1) {
         __asm__("hlt");

@@ -1,36 +1,30 @@
 #include "idt.h"
+#include "keyboard.h"
 
-void isr_handler(void)
-{
-    unsigned char *vga = (unsigned char *)0xB8000 + (80 * 12 * 2);
-    const char *msg = "Silfa: interrupt!";
+static unsigned short *vga = (unsigned short *)0xB8000;
+
+static void vga_print(const char *msg, int row, unsigned char color) {
     int i = 0;
-
-    while (msg[i] != 0)
-    {
-        vga[i * 2] = msg[i];
-        vga[i * 2 + 1] = 0x0F;
+    while (msg[i]) {
+        vga[row * 80 + i] = (color << 8) | (unsigned char)msg[i];
         i++;
     }
 }
 
-void kernel_main(void)
-{
-    unsigned char *vga = (unsigned char *)0xB8000 + (80 * 10 * 2);
-    const char *msg = "Silfa 0.1";
-    int i = 0;
+void isr_handler(void) {
+    vga_print("Silfa: interrupt!", 12, 0x0F);
+}
 
-    while (msg[i] != 0)
-    {
-        vga[i * 2] = msg[i];
-        vga[i * 2 + 1] = 0x0F;
-        i++;
-    }
-
+void kernel_main(void) {
+    vga_print("Silfa 0.1", 10, 0x0F);
+    vga_print("IDT init...", 11, 0x07);
     idt_init();
-
-    while (1)
-    {
+    vga_print("IDT OK", 11, 0x0F);
+    vga_print("KB init...", 12, 0x07);
+    keyboard_init();
+    vga_print("KB OK - pisz tutaj:", 12, 0x0F);
+    __asm__ volatile ("sti");
+    while (1) {
         __asm__("hlt");
     }
 }

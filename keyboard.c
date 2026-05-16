@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include "shell.h"
 
 static inline unsigned char inb(unsigned short port) {
     unsigned char val;
@@ -26,7 +27,7 @@ static const char scancode_table[128] = {
 
 static unsigned short *vga = (unsigned short *)0xB8000;
 static int cur_x = 0;
-static int cur_y = 14;
+static int cur_y = 22;
 
 static void vga_putchar(char c) {
     if (c == '\n') {
@@ -56,8 +57,8 @@ void keyboard_handler(void) {
     if (scancode < 128) {
         char c = scancode_table[scancode];
         if (c) {
-            vga_putchar(c);
-        }
+        shell_input(c);
+     }
     }
 }
 
@@ -70,6 +71,9 @@ void keyboard_init(void) {
     outb(0xA1, 0x02); io_wait();
     outb(0x21, 0x01); io_wait();
     outb(0xA1, 0x01); io_wait();
-    outb(0x21, 0xFD); io_wait();
+    outb(0x21, 0xFC); io_wait();
     outb(0xA1, 0xFF); io_wait();
+    outb(0x43, 0x36); io_wait();
+    outb(0x40, 0x9C); io_wait();
+    outb(0x40, 0x2F); io_wait();
 }

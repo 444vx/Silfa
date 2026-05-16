@@ -16,10 +16,14 @@ void idt_init(void) {
     idt_ptr.base  = (unsigned int)&idt;
 
     extern void isr0(void);
+    extern void irq0_handler(void);
     extern void irq1_handler(void);
+    extern void syscall_entry(void);
 
-    idt_set_gate(0x00, (unsigned int)isr0,         0x08, 0x8E);
-    idt_set_gate(0x21, (unsigned int)irq1_handler, 0x08, 0x8E);
+    idt_set_gate(0x00, (unsigned int)isr0,          0x08, 0x8E);
+    idt_set_gate(0x20, (unsigned int)irq0_handler,  0x08, 0x8E);
+    idt_set_gate(0x21, (unsigned int)irq1_handler,  0x08, 0x8E);
+    idt_set_gate(0x80, (unsigned int)syscall_entry, 0x08, 0x8E);
 
     __asm__ volatile ("lidt %0" : : "m"(idt_ptr));
 }

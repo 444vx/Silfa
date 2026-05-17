@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "sfs.h"
+#include "elf.h"
 
 static unsigned short *vga = (unsigned short *)0xB8000;
 static char input[256];
@@ -80,6 +81,7 @@ static void shell_execute(void) {
         vga_print("  read <name>        - read file\n");
         vga_print("  delete <name>      - delete file\n");
         vga_print("  echo <text>        - print text\n");
+        vga_print("  run <name>         - run ELF program\n");
         vga_print("  version            - show version\n");
 
     } else if (strcmp(input, "clear") == 0) {
@@ -161,6 +163,17 @@ static void shell_execute(void) {
     } else if (strncmp(input, "echo ", 5) == 0) {
         vga_print(input + 5);
         vga_putchar('\n');
+
+    } else if (strncmp(input, "run ", 4) == 0) {
+        const char *name = input + 4;
+        int ret = elf_load(name);
+        if (ret == -1) {
+            vga_print("Error: file not found\n");
+        } else if (ret == -2) {
+            vga_print("Error: not a valid ELF file\n");
+        } else {
+            vga_print("Program finished\n");
+        }
 
     } else if (strcmp(input, "version") == 0) {
         vga_print("Silfa Kernel 0.1\n");
